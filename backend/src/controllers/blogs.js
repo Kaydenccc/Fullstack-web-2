@@ -14,6 +14,17 @@ module.exports = {
       });
     });
   },
+  //! GET ONE BLOG
+  getBlog: function (req, res) {
+    const ID = req.params.postID;
+    ModelBlog.findById(ID, function (err, blog) {
+      if (err) res.status(404).send(err);
+      res.json({
+        msg: 'Get blog Successfully',
+        data: blog,
+      });
+    });
+  },
   //!POST
   postBlog: function (req, res) {
     if (!req.body.author || !req.body.title || !req.body.body) {
