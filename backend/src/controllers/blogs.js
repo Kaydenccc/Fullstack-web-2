@@ -25,6 +25,26 @@ module.exports = {
       });
     });
   },
+
+  //!GET BLOG BERDASARKAN JUDUL
+  getSearch: function (req, res) {
+    console.log(req.params.search);
+    if (!req.params.search) {
+      return res.status(404).json({ msg: 'NOT FOUND DATA BLOG' });
+    }
+    ModelBlog.find({ title: { $regex: '.*' + req.params.search + '.*', $options: 'i' } }, function (err, blog) {
+      console.log(blog);
+      if (err) res.status(404).send(err);
+      if (blog.length > 0) {
+        res.json({
+          msg: 'Get Search Successfully',
+          data: blog,
+        });
+      } else {
+        res.status(404).json({ msg: 'Not Found' });
+      }
+    });
+  },
   //!POST
   postBlog: function (req, res) {
     if (!req.body.author || !req.body.title || !req.body.body) {
@@ -89,8 +109,10 @@ module.exports = {
     const id = req.params.postID;
     ModelBlog.findByIdAndDelete(id, function (err, blog) {
       if (err) console.log(err);
-      deleteFile(blog.image);
-      res.status(201).json({
+      if (blog) {
+        deleteFile(blog.image);
+      }
+      res.status(200).json({
         msg: 'Delete blog successfully',
         data: blog,
       });
